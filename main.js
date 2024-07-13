@@ -2,11 +2,26 @@ window.onload = init
 
 function init() {
 
+  //Controls
+  const fullScreenControl = new ol.control.FullScreen();
+  const mousePositionControl = new ol.control.MousePosition();
+  const overViewMapControl = new ol.control.OverviewMap({
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM()
+        
+      })
+    ]
+  })
+
+  const scaleLineControl = new ol.control.ScaleLine();
+  const zoomSliderControl = new ol.control.ZoomSlider();
+
   var map = new ol.Map({
     view: new ol.View({
       center: ol.proj.fromLonLat([75.10494, 19.66939]),
       zoom: 8,
-      rotation:0.5,
+      rotation: 0,
     }),
 
     layers: [
@@ -14,23 +29,22 @@ function init() {
         source: new ol.source.OSM(),
         title: 'Open Street Map',
         visible: true,
-      }),
-      new ol.layer.Tile({
-        title: "India States",
-        source: new ol.source.TileWMS({
-          url: 'http://localhost:8080/geoserver/Local_postgres/wms',
-          params: { 'LAYERS': 'Local_postgres:nbss_all_soil_data', 'TILED': true },
-          serverType: 'geoserver',
-          visible: true
-        }),
       })
     ],
     target: 'js-map',
-    keyboardEventTarget:document
+    keyboardEventTarget: document,
+    
+    controls: ol.control.defaults().extend([
+      fullScreenControl,
+      mousePositionControl,
+      overViewMapControl,
+      scaleLineControl,
+      zoomSliderControl
+    ])
     // view: mapView
-
-
   })
+  console.log( ol.control.defaults())
+
   const popupContainerElement = document.getElementById('popup-coordinates');
 
   const popup = new ol.Overlay({
@@ -49,16 +63,23 @@ function init() {
 
   //DragRotate Interaction
   const DragRotateInteraction = new ol.interaction.DragRotate({
-    condition:ol.events.condition.altKeyOnly
+    condition: ol.events.condition.altKeyOnly
   })
-map.addInteraction(DragRotateInteraction)
+  map.addInteraction(DragRotateInteraction)
 
-// Drow Interaction
-const drawInteraction = new ol.interaction.Draw({
-  type:'Polygon',
- 
-})
-map.addInteraction(drawInteraction);
+  // Drow Interaction
+  const drawInteraction = new ol.interaction.Draw({
+    type: 'Polygon',
+    freehand: true
+  })
+  map.addInteraction(drawInteraction);
+
+  drawInteraction.on('drawend', function (e) {
+    let parser = new ol.format.GeoJSON();
+    let drawnFeatures = parser.writeFeaturesObject([e.feature]);
+    console.log(drawnFeatures);
+  })
+
 };
 
 
