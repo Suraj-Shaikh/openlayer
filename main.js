@@ -115,9 +115,25 @@ const tileArcGISLayer = new ol.layer.Tile({
   source: new ol.source.TileArcGISRest({
     url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer"
   }),
-  visible: true
+  visible: false
 })
 map.addLayer(tileArcGISLayer);
+
+// NOAA WMS Layer
+
+// SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
+const SISDPLULCWMSLayer = new ol.layer.Tile({
+  source: new ol.source.TileWMS({
+    url:'https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms',
+    params:{
+      LAYERS: 'sisdp_phase2:SISDP_P2_LULC_10K_2016_2019_MH',
+      FORMAT: 'image/png',
+      TRANSPARENT: true
+    },
+    attributions: '<a href=https://bhuvan-vec2.nrsc.gov.in/>© bhuvan<a/>'
+  })
+})
+map.addLayer(SISDPLULCWMSLayer);
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
