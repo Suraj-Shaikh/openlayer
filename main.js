@@ -121,19 +121,19 @@ map.addLayer(tileArcGISLayer);
 
 // NOAA WMS Layer
 
-// NOAA WMS Layer
-const NOAAWMSLayer = new ol.layer.Tile({
+// SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
+const SISDPLULCWMSLayer = new ol.layer.Tile({
   source: new ol.source.TileWMS({
-    url:'https://mapservices.weather.noaa.gov/raster/services/obs/NWM_Land_Analysis/MapServer/WMSServer?request=GetCapabilities&service=WMS',
+    url:'https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms',
     params:{
-      // LAYERS: 5,
+      LAYERS: 'sisdp_phase2:SISDP_P2_LULC_10K_2016_2019_MH',
       FORMAT: 'image/png',
       TRANSPARENT: true
     },
-    // attributions: '<a href=https://nowcoast.noaa.gov/>© NOAA<a/>'
+    attributions: '<a href=https://bhuvan-vec2.nrsc.gov.in/>© bhuvan<a/>'
   })
 })
-map.addLayer(NOAAWMSLayer);
+map.addLayer(SISDPLULCWMSLayer);
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
