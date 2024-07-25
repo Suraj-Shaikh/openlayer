@@ -72,21 +72,52 @@ function init() {
 
     ]
   })
-  map.addLayer(layerGroup);
+  map.addLayer(layerGroup)
 
-  //   const tileDebugLayer = new ol.layer.Tile({
-  //     source: new ol.source.XYZ({
-  //       url:'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{scale}.png'
-  //     }),
-  //     visible:true
-  //   })
-  // map.addLayer()
+// CartoDB BaseMap Layer
+const cartoDBBaseLayer = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: 'http://{1-4}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png',
+    attributions: '© CARTO'
+  }),
+  visible: false
+})
+map.addLayer(cartoDBBaseLayer);
 
-  const tileDebugLayer = new ol.layer.Tile({
-    source: new ol.source.TileDebug(),
-    visible: true
-  })
-  map.addLayer(tileDebugLayer)
+// TileDebug
+const tileDebugLayer = new ol.layer.Tile({
+  source: new ol.source.TileDebug(),
+  visible: false
+})
+map.addLayer(tileDebugLayer);
+
+// Stamen basemap layer
+const stamenBaseLayer = new ol.layer.Tile({
+  source: new ol.source.Stamen({
+    layer: 'terrain-labels',
+    attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+  }),
+  visible: false
+})
+map.addLayer(stamenBaseLayer);
+
+const stamenBaseMapLayer = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.jpg',
+    // attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+  }),
+  visible: true
+})
+map.addLayer(stamenBaseMapLayer);
+
+// tile ArcGIS REST API Layer
+const tileArcGISLayer = new ol.layer.Tile({
+  source: new ol.source.TileArcGISRest({
+    url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer"
+  }),
+  visible: true
+})
+map.addLayer(tileArcGISLayer);
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
