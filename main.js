@@ -115,9 +115,25 @@ const tileArcGISLayer = new ol.layer.Tile({
   source: new ol.source.TileArcGISRest({
     url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer"
   }),
-  visible: true
+  visible: false
 })
 map.addLayer(tileArcGISLayer);
+
+// NOAA WMS Layer
+
+// NOAA WMS Layer
+const NOAAWMSLayer = new ol.layer.Tile({
+  source: new ol.source.TileWMS({
+    url:'https://mapservices.weather.noaa.gov/raster/services/obs/NWM_Land_Analysis/MapServer/WMSServer?request=GetCapabilities&service=WMS',
+    params:{
+      // LAYERS: 5,
+      FORMAT: 'image/png',
+      TRANSPARENT: true
+    },
+    // attributions: '<a href=https://nowcoast.noaa.gov/>© NOAA<a/>'
+  })
+})
+map.addLayer(NOAAWMSLayer);
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
