@@ -115,64 +115,16 @@ const tileArcGISLayer = new ol.layer.Tile({
   source: new ol.source.TileArcGISRest({
     url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer"
   }),
-  visible: false
+  visible:true
 })
 map.addLayer(tileArcGISLayer);
 
 // NOAA WMS Layer
-
-// SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
-const SISDPLULCWMSLayer = new ol.layer.Tile({
-  source: new ol.source.TileWMS({
-    url:'https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms',
-    params:{
-      LAYERS: 'sisdp_phase2:SISDP_P2_LULC_10K_2016_2019_MH',
-      FORMAT: 'image/png',
-      TRANSPARENT: true
-    },
-    attributions: '<a href=https://bhuvan-vec2.nrsc.gov.in/>© bhuvan<a/>'
+const NOAAWMSLayer = new ol.layer.Tile({
+  source:new ol.source.TileWMS({
+    url:"https://opengeo.ncep.noaa.gov/geoserver/wwa/hazards/ows?service=wms&version=1.3.0&request=GetCapabilities"
   })
 })
-map.addLayer(SISDPLULCWMSLayer);
-
-  // console.log(ol.control.defaults()); // Log the default controls to the console
-
-  // Popup for displaying coordinates
-  const popupContainerElement = document.getElementById('popup-coordinates');
-
-  const popup = new ol.Overlay({
-    element: popupContainerElement, // HTML element for the popup
-    positioning: 'center-right' // Positioning of the popup
-  });
-
-  map.addOverlay(popup); // Add the popup overlay to the map
-
-  // Event listener for map clicks
-  map.on('click', function (e) {
-    const clickedCoordinate = e.coordinate; // Get the clicked coordinate
-    console.log(clickedCoordinate)
-    popup.setPosition(undefined); // Clear the previous popup position
-    popup.setPosition(clickedCoordinate); // Set the new popup position
-    popupContainerElement.innerHTML = clickedCoordinate; // Display the coordinates in the popup
-  });
-
-  // // DragRotate interaction
-  // const DragRotateInteraction = new ol.interaction.DragRotate({
-  //   condition: ol.events.condition.altKeyOnly // Enable rotation when the Alt key is pressed
-  // });
-  // map.addInteraction(DragRotateInteraction); // Add the DragRotate interaction to the map
-
-  // // Draw interaction
-  // const drawInteraction = new ol.interaction.Draw({
-  //   type: 'Polygon', // Type of drawing interaction (Polygon)
-  //   freehand: true // Enable freehand drawing
-  // });
-  // map.addInteraction(drawInteraction); // Add the Draw interaction to the map
-
-  // // Event listener for draw end
-  // drawInteraction.on('drawend', function (e) {
-  //   let parser = new ol.format.GeoJSON(); // Create a GeoJSON parser
-  //   let drawnFeatures = parser.writeFeaturesObject([e.feature]); // Convert the drawn feature to GeoJSON
-  //   console.log(drawnFeatures); // Log the drawn features to the console
-  // });
 }
+
+
