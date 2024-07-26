@@ -1,4 +1,8 @@
-window.onload = init
+window.onload = init;
+
+const attributionControl = new ol.control.Attribution({
+  collapsible: true,
+});
 
 function init() {
   // Initialize the map controls
@@ -17,23 +21,13 @@ function init() {
   // Create the map
   var map = new ol.Map({
     view: new ol.View({
-      projection: 'EPSG:4326',
-      center: [75.10494, 19.66939],// Center the map on specified coordinates
+      projection: "EPSG:4326",
+      center: [75.10494, 19.66939], // Center the map on specified coordinates
       zoom: 8, // Initial zoom level
       rotation: 0, // Initial rotation angle
       // extent: [66.97497466187184,6.259464709193743, 98.68143920633882,38.0730477254945]
     }),
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.OSM(), // OpenStreetMap layer for the main map
-        zIndex: 0,
-        // title: 'stamen_watercolor',
-        visible: true, // Layer visibility
-        // extent: [6.97497466187184,6.259464709193743, 98.68143920633882,38.0730477254945]
-
-      })
-    ],
-    target: 'js-map', // HTML element id to render the map
+    target: "js-map", // HTML element id to render the map
     // keyboardEventTarget: document, // Enable keyboard events
     // controls: ol.control.defaults().extend([ // Add default controls and extend with additional controls
     //   fullScreenControl,
@@ -42,115 +36,131 @@ function init() {
     //   scaleLineControl,
     //   zoomSliderControl
     // ])
+  });
 
+  // Base Layer
+  const openstreetMapStandardLayer = new ol.layer.Tile({
+    source: new ol.source.OSM(), // OpenStreetMap layer for the main map
+    zIndex: 0,
+    title: 'stamen_watercolor',
+    visible: false, // Layer visibility
   })
 
-  // Layer Group
-  const layerGroup = new ol.layer.Group({
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.OSM({
-          url: 'https://{a-c}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
-        }),
-        zIndex: 0,
-        visible: false,
-        // extent: [66.97497466187184,6.259464709193743, 98.68143920633882,38.0730477254945],
-        opacity: 1
-      }),
+  // Openstreet Map Standard
+  const openstreetmapHumanitarian = new ol.layer.Tile({
+    source: new ol.source.OSM({
+      url: "https://{a-c}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    }),
+    zIndex: 0,
+    visible: false,
+    title:'OSMHumanitarian'
+  })
 
-      //Bing Maps Basemap Layer
-      new ol.layer.Tile({
-        source: new ol.source.BingMaps({
-          key: "VGeBwM0ngFaLQXdBrvtr~BYbZ6Bd7Jw3rZ8gQHhGSBA~AmdRzEG5xXUgHgVnNyFDnY_BDK-Lvg3fF8orRTmC_jI9MkAwiQEdA8fS5roC8j6s",
-          imagerySet: 'AerialWithLabels' // Road, CanvasDark, canvasGray,OrdnanceSurvey
-        }),
-        zIndex: 0,
-        visible: true,
-        extent: [66.97497466187184, 6.259464709193743, 98.68143920633882, 38.0730477254945],
-        opacity: 1
-      })
-
+  //Bing Maps Basemap Layer
+  const BingMaps =new ol.layer.Tile({
+    source: new ol.source.BingMaps({
+      key: "VGeBwM0ngFaLQXdBrvtr~BYbZ6Bd7Jw3rZ8gQHhGSBA~AmdRzEG5xXUgHgVnNyFDnY_BDK-Lvg3fF8orRTmC_jI9MkAwiQEdA8fS5roC8j6s",
+      imagerySet: "AerialWithLabels", // Road, CanvasDark, canvasGray,OrdnanceSurvey
+    }),
+    zIndex: 0,
+    visible: true,
+    title:'BingMaps',
+    extent: [
+      66.97497466187184, 6.259464709193743, 98.68143920633882, 38.0730477254945,
     ]
   })
-  map.addLayer(layerGroup)
-
-// CartoDB BaseMap Layer
-const cartoDBBaseLayer = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    url: 'http://{1-4}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png',
-    attributions: '© CARTO'
-  }),
-  visible: false
-})
-map.addLayer(cartoDBBaseLayer);
-
-// TileDebug
-const tileDebugLayer = new ol.layer.Tile({
-  source: new ol.source.TileDebug(),
-  visible: false
-})
-map.addLayer(tileDebugLayer);
-
-// Stamen basemap layer
-const stamenBaseLayer = new ol.layer.Tile({
-  source: new ol.source.Stamen({
-    layer: 'terrain-labels',
-    attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
-  }),
-  visible: false
-})
-map.addLayer(stamenBaseLayer);
-
-const stamenBaseMapLayer = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    url: 'https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.jpg',
-    // attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
-  }),
-  visible: true
-})
-map.addLayer(stamenBaseMapLayer);
-
-// tile ArcGIS REST API Layer
-const tileArcGISLayer = new ol.layer.Tile({
-  source: new ol.source.TileArcGISRest({
-    url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer"
-  }),
-  visible: false
-})
-map.addLayer(tileArcGISLayer);
-
-// NOAA WMS Layer
-
-// SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
-const SISDPLULCWMSLayer = new ol.layer.Tile({
-  source: new ol.source.TileWMS({
-    url:'https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms',
-    params:{
-      LAYERS: 'sisdp_phase2:SISDP_P2_LULC_10K_2016_2019_MH',
-      FORMAT: 'image/png',
-      TRANSPARENT: true
-    },
-    attributions: '<a href=https://bhuvan-vec2.nrsc.gov.in/>© bhuvan<a/>'
+  
+  // CartoDB BaseMap Layer
+  const cartoDBBaseLayer = new ol.layer.Tile({
+    source: new ol.source.XYZ({
+      url: "http://{1-4}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png",
+      attributions: "© CARTO",
+    }),
+    visible: false,
+    title:'CartoDarkAll'
   })
-})
-map.addLayer(SISDPLULCWMSLayer);
+
+  // Stamen basemap layer
+  const stamenBaseLayer = new ol.layer.Tile({
+    source: new ol.source.Stamen({
+      layer: "terrain-labels",
+      attributions:
+        'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+    }),
+    visible: false,
+    title:'StamenTerrainWithLabels'
+  });
+
+  const StamenTerrainLayer = new ol.layer.Tile({
+    source: new ol.source.XYZ({
+      url: "https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}.jpg",
+      // attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+    }),
+    visible: false,
+    title:'StamenTerrain'
+  });
+
+  // Layer Group
+  const BaselayerGroup = new ol.layer.Group({
+    layers: [
+      openstreetMapStandardLayer,openstreetmapHumanitarian,BingMaps,cartoDBBaseLayer,stamenBaseLayer,StamenTerrainLayer
+    ],
+  });
+  map.addLayer(BaselayerGroup);
+
+  
+  // TileDebug
+  const tileDebugLayer = new ol.layer.Tile({
+    source: new ol.source.TileDebug(),
+    visible: false,
+  });
+  map.addLayer(tileDebugLayer);
+
+  
+  
+
+  // tile ArcGIS REST API Layer
+  const tileArcGISLayer = new ol.layer.Tile({
+    source: new ol.source.TileArcGISRest({
+      url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
+    }),
+    visible: false,
+    title:'StamenTerrain'
+  });
+  map.addLayer(tileArcGISLayer);
+
+  // NOAA WMS Layer
+
+  // SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
+  const SISDPLULCWMSLayer = new ol.layer.Tile({
+    source: new ol.source.TileWMS({
+      url: "https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms",
+      params: {
+        LAYERS: "sisdp_phase2:SISDP_P2_LULC_10K_2016_2019_MH",
+        FORMAT: "image/png",
+        TRANSPARENT: true,
+      },
+      attributions: "<a href=https://bhuvan-vec2.nrsc.gov.in/>© bhuvan<a/>",
+    }),
+  });
+  map.addLayer(SISDPLULCWMSLayer);
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
   // Popup for displaying coordinates
-  const popupContainerElement = document.getElementById('popup-coordinates');
+  const popupContainerElement = document.getElementById("popup-coordinates");
 
   const popup = new ol.Overlay({
     element: popupContainerElement, // HTML element for the popup
-    positioning: 'center-right' // Positioning of the popup
+    positioning: "center-right", // Positioning of the popup
   });
 
   map.addOverlay(popup); // Add the popup overlay to the map
 
   // Event listener for map clicks
-  map.on('click', function (e) {
+  map.on("click", function (e) {
     const clickedCoordinate = e.coordinate; // Get the clicked coordinate
-    console.log(clickedCoordinate)
+    console.log(clickedCoordinate);
     popup.setPosition(undefined); // Clear the previous popup position
     popup.setPosition(clickedCoordinate); // Set the new popup position
     popupContainerElement.innerHTML = clickedCoordinate; // Display the coordinates in the popup
