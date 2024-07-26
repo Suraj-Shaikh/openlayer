@@ -5,6 +5,16 @@ body{
   margin: 0;
   padding: 0;
 }
+
+.grid-container{
+display: grid;
+grid-template-columns: 35vw 65vw;
+grid-template-rows: 100vh;
+}
+
+.sidebar{
+  margin-left: 15px;
+}
 .map {
   /* position: fixed; */
     width: 100vw;
