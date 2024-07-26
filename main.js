@@ -100,10 +100,25 @@ function init() {
     title:'StamenTerrain'
   });
 
+  // SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
+  const SISDPLULCWMSLayer = new ol.layer.Tile({
+    source: new ol.source.TileWMS({
+      url: "https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms",
+      params: {
+        LAYERS: "sisdp_phase2:SISDP_P2_LULC_10K_2016_2019_MH",
+        FORMAT: "image/png",
+        TRANSPARENT: false,
+      },
+      attributions: "<a href=https://bhuvan-vec2.nrsc.gov.in/>© bhuvan<a/>",
+    }),
+    visible: false,
+    title:'SISDPLULCWMSLayer'
+  });
+
   // Layer Group
   const BaselayerGroup = new ol.layer.Group({
     layers: [
-      openstreetMapStandardLayer,openstreetmapHumanitarian,BingMaps,cartoDBBaseLayer,stamenBaseLayer,StamenTerrainLayer
+      openstreetMapStandardLayer,openstreetmapHumanitarian,BingMaps,cartoDBBaseLayer,stamenBaseLayer,StamenTerrainLayer,SISDPLULCWMSLayer
     ],
   });
   map.addLayer(BaselayerGroup);
@@ -129,21 +144,8 @@ function init() {
   });
   map.addLayer(tileArcGISLayer);
 
-  // NOAA WMS Layer
-
-  // SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
-  const SISDPLULCWMSLayer = new ol.layer.Tile({
-    source: new ol.source.TileWMS({
-      url: "https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms",
-      params: {
-        LAYERS: "sisdp_phase2:SISDP_P2_LULC_10K_2016_2019_MH",
-        FORMAT: "image/png",
-        TRANSPARENT: true,
-      },
-      attributions: "<a href=https://bhuvan-vec2.nrsc.gov.in/>© bhuvan<a/>",
-    }),
-  });
-  map.addLayer(SISDPLULCWMSLayer);
+  
+  
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
