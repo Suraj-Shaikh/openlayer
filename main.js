@@ -42,9 +42,9 @@ function init() {
   const openstreetMapStandardLayer = new ol.layer.Tile({
     source: new ol.source.OSM(), // OpenStreetMap layer for the main map
     zIndex: 0,
-    title: 'stamen_watercolor',
+    title: "stamen_watercolor",
     visible: false, // Layer visibility
-  })
+  });
 
   // Openstreet Map Standard
   const openstreetmapHumanitarian = new ol.layer.Tile({
@@ -53,23 +53,23 @@ function init() {
     }),
     zIndex: 0,
     visible: false,
-    title:'OSMHumanitarian'
-  })
+    title: "OSMHumanitarian",
+  });
 
   //Bing Maps Basemap Layer
-  const BingMaps =new ol.layer.Tile({
+  const BingMaps = new ol.layer.Tile({
     source: new ol.source.BingMaps({
       key: "VGeBwM0ngFaLQXdBrvtr~BYbZ6Bd7Jw3rZ8gQHhGSBA~AmdRzEG5xXUgHgVnNyFDnY_BDK-Lvg3fF8orRTmC_jI9MkAwiQEdA8fS5roC8j6s",
       imagerySet: "AerialWithLabels", // Road, CanvasDark, canvasGray,OrdnanceSurvey
     }),
     zIndex: 0,
     visible: true,
-    title:'BingMaps',
+    title: "BingMaps",
     extent: [
       66.97497466187184, 6.259464709193743, 98.68143920633882, 38.0730477254945,
-    ]
-  })
-  
+    ],
+  });
+
   // CartoDB BaseMap Layer
   const cartoDBBaseLayer = new ol.layer.Tile({
     source: new ol.source.XYZ({
@@ -77,8 +77,8 @@ function init() {
       attributions: "© CARTO",
     }),
     visible: false,
-    title:'CartoDarkAll'
-  })
+    title: "CartoDarkAll",
+  });
 
   // Stamen basemap layer
   const stamenBaseLayer = new ol.layer.Tile({
@@ -88,7 +88,7 @@ function init() {
         'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
     }),
     visible: false,
-    title:'StamenTerrainWithLabels'
+    title: "StamenTerrainWithLabels",
   });
 
   const StamenTerrainLayer = new ol.layer.Tile({
@@ -97,7 +97,7 @@ function init() {
       // attributions: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
     }),
     visible: false,
-    title:'StamenTerrain'
+    title: "StamenTerrain",
   });
 
   // SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
@@ -112,18 +112,35 @@ function init() {
       attributions: "<a href=https://bhuvan-vec2.nrsc.gov.in/>© bhuvan<a/>",
     }),
     visible: false,
-    title:'SISDPLULCWMSLayer'
+    title: "SISDPLULCWMSLayer",
   });
 
   // Layer Group
-  const BaselayerGroup = new ol.layer.Group({
+  const baselayerGroup = new ol.layer.Group({
     layers: [
-      openstreetMapStandardLayer,openstreetmapHumanitarian,BingMaps,cartoDBBaseLayer,stamenBaseLayer,StamenTerrainLayer,SISDPLULCWMSLayer
+      openstreetMapStandardLayer,
+      openstreetmapHumanitarian,
+      BingMaps,
+      cartoDBBaseLayer,
+      stamenBaseLayer,
+      StamenTerrainLayer,
+      SISDPLULCWMSLayer,
     ],
   });
-  map.addLayer(BaselayerGroup);
+  map.addLayer(baselayerGroup);
 
-  
+  // Layer Switcher Logic for BaseLayer
+  const baseLayerElements = document.querySelectorAll('.sidebar > input[type=radio]')
+  for(let baseLayerElement of baseLayerElements){
+    baseLayerElement.addEventListener('change',function(){
+      let baseLayerElementValue = this.value;
+      baselayerGroup.getLayers().forEach(function(element,index,array){
+        let baseLayerName = element.get('title');
+        element.setVisible(baseLayerName === baseLayerElementValue)
+      })
+    })
+  }
+
   // TileDebug
   const tileDebugLayer = new ol.layer.Tile({
     source: new ol.source.TileDebug(),
@@ -131,21 +148,15 @@ function init() {
   });
   map.addLayer(tileDebugLayer);
 
-  
-  
-
   // tile ArcGIS REST API Layer
   const tileArcGISLayer = new ol.layer.Tile({
     source: new ol.source.TileArcGISRest({
       url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
     }),
     visible: false,
-    title:'StamenTerrain'
+    title: "StamenTerrain",
   });
   map.addLayer(tileArcGISLayer);
-
-  
-  
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
