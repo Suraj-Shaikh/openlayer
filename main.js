@@ -65,9 +65,9 @@ function init() {
     zIndex: 0,
     visible: true,
     title: "BingMaps",
-    extent: [
-      66.97497466187184, 6.259464709193743, 98.68143920633882, 38.0730477254945,
-    ],
+    // extent: [
+    //   66.97497466187184, 6.259464709193743, 98.68143920633882, 38.0730477254945,
+    // ],
   });
 
   // CartoDB BaseMap Layer
@@ -100,7 +100,51 @@ function init() {
     title: "StamenTerrain",
   });
 
-  // SISDP_P2_LULC_10K_2016_2019_MH WMS Layer
+  // Layer Group
+  const baselayerGroup = new ol.layer.Group({
+    layers: [
+      openstreetMapStandardLayer,
+      openstreetmapHumanitarian,
+      BingMaps,
+      cartoDBBaseLayer,
+      stamenBaseLayer,
+      StamenTerrainLayer,
+    ],
+  });
+  map.addLayer(baselayerGroup);
+
+  // Layer Switcher Logic for Base Layer
+  const baseLayerElements = document.querySelectorAll(
+    ".sidebar > input[type=radio]"
+  );
+  for (let baseLayerElement of baseLayerElements) {
+    baseLayerElement.addEventListener("change", function () {
+      let baseLayerElementValue = this.value;
+      baselayerGroup.getLayers().forEach(function (element, index, array) {
+        let baseLayerName = element.get("title");
+        element.setVisible(baseLayerName === baseLayerElementValue);
+      });
+    });
+  }
+
+  //Raster Layers
+  // TileDebug
+  const tileDebugLayer = new ol.layer.Tile({
+    source: new ol.source.TileDebug(),
+    visible: false,
+    title: "TileDebugLayer",
+  });
+
+  // tile ArcGIS REST API Layer
+  const tileArcGISLayer = new ol.layer.Tile({
+    source: new ol.source.TileArcGISRest({
+      url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
+    }),
+    visible: false,
+    title: "TileArcGISLayer",
+  });
+
+  // SISDP_P2_LULC_10K_2016_20title: "TileArcGISLayer"19_MH WMS Layer
   const SISDPLULCWMSLayer = new ol.layer.Tile({
     source: new ol.source.TileWMS({
       url: "https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms",
@@ -115,48 +159,31 @@ function init() {
     title: "SISDPLULCWMSLayer",
   });
 
-  // Layer Group
-  const baselayerGroup = new ol.layer.Group({
-    layers: [
-      openstreetMapStandardLayer,
-      openstreetmapHumanitarian,
-      BingMaps,
-      cartoDBBaseLayer,
-      stamenBaseLayer,
-      StamenTerrainLayer,
-      SISDPLULCWMSLayer,
-    ],
+  // Raster Tile Layer Group
+  const rasterTileLayerGroup = new ol.layer.Group({
+    layers: [tileDebugLayer, tileArcGISLayer, SISDPLULCWMSLayer],
   });
-  map.addLayer(baselayerGroup);
+  map.addLayer(rasterTileLayerGroup);
 
-  // Layer Switcher Logic for BaseLayer
-  const baseLayerElements = document.querySelectorAll('.sidebar > input[type=radio]')
-  for(let baseLayerElement of baseLayerElements){
-    baseLayerElement.addEventListener('change',function(){
-      let baseLayerElementValue = this.value;
-      baselayerGroup.getLayers().forEach(function(element,index,array){
-        let baseLayerName = element.get('title');
-        element.setVisible(baseLayerName === baseLayerElementValue)
+  //Layer Switcher Logic for Raster Tile Layer
+
+  const tileRasterLayerElements = document.querySelectorAll(
+    ".sidebar > input[type=checkbox]"
+  );
+  for(let tileRasterLayerElement of tileRasterLayerElements){
+    tileRasterLayerElement.addEventListener('change',function(){
+      let tileRasterLayerElementValue = this.value;
+      let tilerasterLayer;
+
+      rasterTileLayerGroup.getLayers().forEach(function(element,index,array){
+        if(tileRasterLayerElementValue === element.get('title')){
+          tilerasterLayer = element;
+          // console.log(rasterLayerName.title)
+        }
       })
+      this.checked ? tilerasterLayer.setVisible(true) : tilerasterLayer.setVisible(false);
     })
   }
-
-  // TileDebug
-  const tileDebugLayer = new ol.layer.Tile({
-    source: new ol.source.TileDebug(),
-    visible: false,
-  });
-  map.addLayer(tileDebugLayer);
-
-  // tile ArcGIS REST API Layer
-  const tileArcGISLayer = new ol.layer.Tile({
-    source: new ol.source.TileArcGISRest({
-      url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer",
-    }),
-    visible: false,
-    title: "StamenTerrain",
-  });
-  map.addLayer(tileArcGISLayer);
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 

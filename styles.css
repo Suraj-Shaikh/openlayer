@@ -8,7 +8,7 @@ body{
 
 .grid-container{
 display: grid;
-grid-template-columns: 30vw 65vw;
+grid-template-columns: 20vw 65vw;
 grid-template-rows: 100vh;
 }
 
