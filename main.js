@@ -219,12 +219,26 @@ function init() {
   // Central EU Countries KML
   const EUCountriesKML = new ol.layer.Vector({
     source: new ol.source.Vector({
-      url: "./data\Central_EU_countries_KML.kml",
+      url: "./data/Central_EU_countries_KML.kml",
       format: new ol.format.KML(),
     }),
     visible: false,
     title: "CentralEUCountriesKML",
   });
+
+  // HeatMap
+  const heatMapOnlineFBUsers = new ol.layer.Heatmap({
+    source: new ol.source.Vector({
+      url: './data/onlineFBUsers.geojson',
+      format: new ol.format.GeoJSON()
+    }),
+    radius: 20,
+    blur: 12,
+    gradient: ['#DC143C', '#DC143C', '#000000', '#000000', '#000000'],
+    title: 'OnlineFBUsers',
+    visible: false
+  })
+  
 
   // Raster Tile Layer Group
   const rasterTileLayerGroup = new ol.layer.Group({
@@ -234,7 +248,8 @@ function init() {
       SISDPLULCWMSLayer,
       openstreetmapHumanitarianStatic,
       IndianStateGeoJSON,
-      EUCountriesKML
+      EUCountriesKML,
+      heatMapOnlineFBUsers
     ],
   });
   map.addLayer(rasterTileLayerGroup);
