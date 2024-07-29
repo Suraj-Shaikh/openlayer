@@ -21,9 +21,9 @@ function init() {
   // Create the map
   var map = new ol.Map({
     view: new ol.View({
-      projection: "EPSG:4326",
+      // projection: "EPSG:4326",
       center: [75.10494, 19.66939], // Center the map on specified coordinates
-      zoom: 8, // Initial zoom level
+      zoom: 3, // Initial zoom level
       rotation: 0, // Initial rotation angle
       // extent: [66.97497466187184,6.259464709193743, 98.68143920633882,38.0730477254945]
     }),
@@ -63,7 +63,7 @@ function init() {
       imagerySet: "AerialWithLabels", // Road, CanvasDark, canvasGray,OrdnanceSurvey
     }),
     zIndex: 0,
-    visible: true,
+    visible: false,
     title: "BingMaps",
     // extent: [
     //   66.97497466187184, 6.259464709193743, 98.68143920633882, 38.0730477254945,
@@ -100,7 +100,29 @@ function init() {
     title: "StamenTerrain",
   });
 
-  // Layer Group
+ // Base Vector Layers
+  // Vector Tile Layer OpenstreetMap
+  const openstreetMapVectorTile = new ol.layer.VectorTile({
+    source: new ol.source.VectorTile({
+      url: 'https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key=9rMhqeEevzAPoehEWAa3',
+      format: new ol.format.MVT(),
+      attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+    }),
+    visible: false,
+    title: 'VectorTileLayerOpenstreetMap'
+  })
+// https://api.maptiler.com/maps/07f17c14-e35d-4da0-b5ff-747ee19b19b2/style.json?key=9rMhqeEevzAPoehEWAa3
+//https://api.maptiler.com/maps/openstreetmap/style.json?key=9rMhqeEevzAPoehEWAa3
+  const openstreetMapVectorTileStyles = 'https://api.maptiler.com/maps/07f17c14-e35d-4da0-b5ff-747ee19b19b2/style.json?key=9rMhqeEevzAPoehEWAa3';
+  fetch(openstreetMapVectorTileStyles).then(function(response) {
+    console.log(response)
+    response.json().then(function(glStyle) {
+      console.log(glStyle)
+      stylefunction(openstreetMapVectorTile, glStyle, '07f17c14-e35d-4da0-b5ff-747ee19b19b2');
+    });
+  });
+
+  // Base Layer Group
   const baselayerGroup = new ol.layer.Group({
     layers: [
       openstreetMapStandardLayer,
@@ -109,6 +131,7 @@ function init() {
       cartoDBBaseLayer,
       stamenBaseLayer,
       StamenTerrainLayer,
+      openstreetMapVectorTile
     ],
   });
   map.addLayer(baselayerGroup);
@@ -171,7 +194,7 @@ function init() {
   })
   // Raster Tile Layer Group
   const rasterTileLayerGroup = new ol.layer.Group({
-    layers: [tileDebugLayer, tileArcGISLayer, SISDPLULCWMSLayer,openstreetmapHumanitarianStatic],
+    layers: [tileDebugLayer, tileArcGISLayer, SISDPLULCWMSLayer, openstreetmapHumanitarianStatic],
   });
   map.addLayer(rasterTileLayerGroup);
 
@@ -195,8 +218,8 @@ function init() {
     })
   }
 
-  
-  
+
+
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
