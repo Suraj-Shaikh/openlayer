@@ -159,9 +159,19 @@ function init() {
     title: "SISDPLULCWMSLayer",
   });
 
+  // static image 
+
+  const openstreetmapHumanitarianStatic = new ol.layer.Image({
+    source: new ol.source.ImageStatic({
+      url: './data/imagestatic.png',
+      imageExtent: [73.12740093750001, 21.097612656250003, 74.53365093750001, 22.503862656250003],
+      attributions: '@ Humanitarian OSM Tags'
+    }),
+    title: 'openstreetmapHumanitarianStatic'
+  })
   // Raster Tile Layer Group
   const rasterTileLayerGroup = new ol.layer.Group({
-    layers: [tileDebugLayer, tileArcGISLayer, SISDPLULCWMSLayer],
+    layers: [tileDebugLayer, tileArcGISLayer, SISDPLULCWMSLayer,openstreetmapHumanitarianStatic],
   });
   map.addLayer(rasterTileLayerGroup);
 
@@ -170,13 +180,13 @@ function init() {
   const tileRasterLayerElements = document.querySelectorAll(
     ".sidebar > input[type=checkbox]"
   );
-  for(let tileRasterLayerElement of tileRasterLayerElements){
-    tileRasterLayerElement.addEventListener('change',function(){
+  for (let tileRasterLayerElement of tileRasterLayerElements) {
+    tileRasterLayerElement.addEventListener('change', function () {
       let tileRasterLayerElementValue = this.value;
       let tilerasterLayer;
 
-      rasterTileLayerGroup.getLayers().forEach(function(element,index,array){
-        if(tileRasterLayerElementValue === element.get('title')){
+      rasterTileLayerGroup.getLayers().forEach(function (element, index, array) {
+        if (tileRasterLayerElementValue === element.get('title')) {
           tilerasterLayer = element;
           // console.log(rasterLayerName.title)
         }
@@ -184,6 +194,9 @@ function init() {
       this.checked ? tilerasterLayer.setVisible(true) : tilerasterLayer.setVisible(false);
     })
   }
+
+  
+  
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
