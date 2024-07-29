@@ -100,23 +100,25 @@ function init() {
     title: "StamenTerrain",
   });
 
- // Base Vector Layers
+  // Base Vector Layers
   // Vector Tile Layer OpenstreetMap
   const openstreetMapVectorTile = new ol.layer.VectorTile({
     source: new ol.source.VectorTile({
-      url: 'https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key=9rMhqeEevzAPoehEWAa3',
+      url: "https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key=9rMhqeEevzAPoehEWAa3",
       format: new ol.format.MVT(),
-      attributions: '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>'
+      attributions:
+        '<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
     }),
     visible: false,
-    title: 'VectorTileLayerOpenstreetMap'
-  })
-  const openstreetMapVectorTileStyles = 'https://api.maptiler.com/maps/openstreetmap/style.json?key=9rMhqeEevzAPoehEWAa3';
-  fetch(openstreetMapVectorTileStyles).then(function(response) {
-    console.log(response)
-    response.json().then(function(glStyle) {
-      console.log(glStyle)
-      stylefunction(openstreetMapVectorTile, glStyle, '07f17c14-e35d-4da0-b5ff-747ee19b19b2');
+    title: "VectorTileLayerOpenstreetMap",
+  });
+  const openstreetMapVectorTileStyles =
+    "https://api.maptiler.com/maps/openstreetmap/style.json?key=9rMhqeEevzAPoehEWAa3";
+  fetch(openstreetMapVectorTileStyles).then(function (response) {
+    // console.log(response)
+    response.json().then(function (glStyle) {
+      // console.log(glStyle)
+      // stylefunction(openstreetMapVectorTile, glStyle, '07f17c14-e35d-4da0-b5ff-747ee19b19b2');
     });
   });
 
@@ -129,7 +131,7 @@ function init() {
       cartoDBBaseLayer,
       stamenBaseLayer,
       StamenTerrainLayer,
-      openstreetMapVectorTile
+      openstreetMapVectorTile,
     ],
   });
   map.addLayer(baselayerGroup);
@@ -180,19 +182,60 @@ function init() {
     title: "SISDPLULCWMSLayer",
   });
 
-  // static image 
+  // static image
 
   const openstreetmapHumanitarianStatic = new ol.layer.Image({
     source: new ol.source.ImageStatic({
-      url: './data/imagestatic.png',
-      imageExtent: [73.12740093750001, 21.097612656250003, 74.53365093750001, 22.503862656250003],
-      attributions: '@ Humanitarian OSM Tags'
+      url: "./data/imagestatic.png",
+      imageExtent: [
+        73.12740093750001, 21.097612656250003, 74.53365093750001,
+        22.503862656250003,
+      ],
+      attributions: "@ Humanitarian OSM Tags",
     }),
-    title: 'openstreetmapHumanitarianStatic'
-  })
+    title: "openstreetmapHumanitarianStatic",
+  });
+  // Vector Layers
+  //Central India State GeoJSON Vector Layer
+  const IndianStateGeoJSON = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      url: "./data/map.geojson",
+      format: new ol.format.GeoJSON(),
+    }),
+    visible: true,
+    title: "IndianStateGeoJSON",
+  });
+ 
+
+  //Central India State GeoJSON VectorImage Layer
+  const IndianStateGeoJSONVectorImage = new ol.layer.VectorImage({
+    source: new ol.source.Vector({
+      url: "./data/map.geojson",
+      format: new ol.format.GeoJSON(),
+    }),
+    visible: true,
+  });
+ 
+  // Central EU Countries KML
+  const EUCountriesKML = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      url: "./data\Central_EU_countries_KML.kml",
+      format: new ol.format.KML(),
+    }),
+    visible: false,
+    title: "CentralEUCountriesKML",
+  });
+
   // Raster Tile Layer Group
   const rasterTileLayerGroup = new ol.layer.Group({
-    layers: [tileDebugLayer, tileArcGISLayer, SISDPLULCWMSLayer, openstreetmapHumanitarianStatic],
+    layers: [
+      tileDebugLayer,
+      tileArcGISLayer,
+      SISDPLULCWMSLayer,
+      openstreetmapHumanitarianStatic,
+      IndianStateGeoJSON,
+      EUCountriesKML
+    ],
   });
   map.addLayer(rasterTileLayerGroup);
 
@@ -202,22 +245,23 @@ function init() {
     ".sidebar > input[type=checkbox]"
   );
   for (let tileRasterLayerElement of tileRasterLayerElements) {
-    tileRasterLayerElement.addEventListener('change', function () {
+    tileRasterLayerElement.addEventListener("change", function () {
       let tileRasterLayerElementValue = this.value;
       let tilerasterLayer;
 
-      rasterTileLayerGroup.getLayers().forEach(function (element, index, array) {
-        if (tileRasterLayerElementValue === element.get('title')) {
-          tilerasterLayer = element;
-          // console.log(rasterLayerName.title)
-        }
-      })
-      this.checked ? tilerasterLayer.setVisible(true) : tilerasterLayer.setVisible(false);
-    })
+      rasterTileLayerGroup
+        .getLayers()
+        .forEach(function (element, index, array) {
+          if (tileRasterLayerElementValue === element.get("title")) {
+            tilerasterLayer = element;
+            // console.log(rasterLayerName.title)
+          }
+        });
+      this.checked
+        ? tilerasterLayer.setVisible(true)
+        : tilerasterLayer.setVisible(false);
+    });
   }
-
-
-
 
   // console.log(ol.control.defaults()); // Log the default controls to the console
 
