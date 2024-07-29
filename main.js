@@ -111,9 +111,7 @@ function init() {
     visible: false,
     title: 'VectorTileLayerOpenstreetMap'
   })
-// https://api.maptiler.com/maps/07f17c14-e35d-4da0-b5ff-747ee19b19b2/style.json?key=9rMhqeEevzAPoehEWAa3
-//https://api.maptiler.com/maps/openstreetmap/style.json?key=9rMhqeEevzAPoehEWAa3
-  const openstreetMapVectorTileStyles = 'https://api.maptiler.com/maps/07f17c14-e35d-4da0-b5ff-747ee19b19b2/style.json?key=9rMhqeEevzAPoehEWAa3';
+  const openstreetMapVectorTileStyles = 'https://api.maptiler.com/maps/openstreetmap/style.json?key=9rMhqeEevzAPoehEWAa3';
   fetch(openstreetMapVectorTileStyles).then(function(response) {
     console.log(response)
     response.json().then(function(glStyle) {
