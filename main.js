@@ -205,7 +205,6 @@ function init() {
     visible: true,
     title: "IndianStateGeoJSON",
   });
- 
 
   //Central India State GeoJSON VectorImage Layer
   const IndianStateGeoJSONVectorImage = new ol.layer.VectorImage({
@@ -215,7 +214,7 @@ function init() {
     }),
     visible: true,
   });
- 
+
   // Central EU Countries KML
   const EUCountriesKML = new ol.layer.Vector({
     source: new ol.source.Vector({
@@ -238,14 +237,13 @@ function init() {
     title: 'OnlineFBUsers',
     visible: false
   })
-  
 
   // Raster Tile Layer Group
   const rasterTileLayerGroup = new ol.layer.Group({
     layers: [
-      tileDebugLayer,
-      tileArcGISLayer,
       SISDPLULCWMSLayer,
+      tileArcGISLayer,
+      tileDebugLayer,
       openstreetmapHumanitarianStatic,
       IndianStateGeoJSON,
       EUCountriesKML,
@@ -255,7 +253,6 @@ function init() {
   map.addLayer(rasterTileLayerGroup);
 
   //Layer Switcher Logic for Raster Tile Layer
-
   const tileRasterLayerElements = document.querySelectorAll(
     ".sidebar > input[type=checkbox]"
   );
@@ -278,44 +275,57 @@ function init() {
     });
   }
 
-  // console.log(ol.control.defaults()); // Log the default controls to the console
+  // Vector Feature Popup Information
+  // Vector Feature Popup Logic
 
-  // Popup for displaying coordinates
-  const popupContainerElement = document.getElementById("popup-coordinates");
+  map.on('click',function(e){
+    map.forEachFeatureAtPixel(e.pixel,function(feature,layer){
+      console.log(feature)
+    })
+  })
 
-  const popup = new ol.Overlay({
-    element: popupContainerElement, // HTML element for the popup
-    positioning: "center-right", // Positioning of the popup
-  });
-
-  map.addOverlay(popup); // Add the popup overlay to the map
-
-  // Event listener for map clicks
-  map.on("click", function (e) {
-    const clickedCoordinate = e.coordinate; // Get the clicked coordinate
-    console.log(clickedCoordinate);
-    popup.setPosition(undefined); // Clear the previous popup position
-    popup.setPosition(clickedCoordinate); // Set the new popup position
-    popupContainerElement.innerHTML = clickedCoordinate; // Display the coordinates in the popup
-  });
-
-  // // DragRotate interaction
-  // const DragRotateInteraction = new ol.interaction.DragRotate({
-  //   condition: ol.events.condition.altKeyOnly // Enable rotation when the Alt key is pressed
-  // });
-  // map.addInteraction(DragRotateInteraction); // Add the DragRotate interaction to the map
-
-  // // Draw interaction
-  // const drawInteraction = new ol.interaction.Draw({
-  //   type: 'Polygon', // Type of drawing interaction (Polygon)
-  //   freehand: true // Enable freehand drawing
-  // });
-  // map.addInteraction(drawInteraction); // Add the Draw interaction to the map
-
-  // // Event listener for draw end
-  // drawInteraction.on('drawend', function (e) {
-  //   let parser = new ol.format.GeoJSON(); // Create a GeoJSON parser
-  //   let drawnFeatures = parser.writeFeaturesObject([e.feature]); // Convert the drawn feature to GeoJSON
-  //   console.log(drawnFeatures); // Log the drawn features to the console
-  // });
+  /*
+    // console.log(ol.control.defaults()); // Log the default controls to the console
+  
+    // Popup for displaying coordinates
+    const popupContainerElement = document.getElementById("popup-coordinates");
+  
+    const popup = new ol.Overlay({
+      element: popupContainerElement, // HTML element for the popup
+      positioning: "center-right", // Positioning of the popup
+    });
+  
+    map.addOverlay(popup); // Add the popup overlay to the map
+  
+  
+    // Event listener for map clicks
+    map.on("click", function (e) {
+      const clickedCoordinate = e.coordinate; // Get the clicked coordinate
+      console.log(clickedCoordinate);
+      popup.setPosition(undefined); // Clear the previous popup position
+      popup.setPosition(clickedCoordinate); // Set the new popup position
+      popupContainerElement.innerHTML = clickedCoordinate; // Display the coordinates in the popup
+    });
+  
+    // DragRotate interaction
+    const DragRotateInteraction = new ol.interaction.DragRotate({
+      condition: ol.events.condition.altKeyOnly // Enable rotation when the Alt key is pressed
+    });
+    map.addInteraction(DragRotateInteraction); // Add the DragRotate interaction to the map
+  
+    // Draw interaction
+    const drawInteraction = new ol.interaction.Draw({
+      type: 'Polygon', // Type of drawing interaction (Polygon)
+      freehand: true // Enable freehand drawing
+    });
+    map.addInteraction(drawInteraction); // Add the Draw interaction to the map
+  
+    // Event listener for draw end
+    drawInteraction.on('drawend', function (e) {
+      let parser = new ol.format.GeoJSON(); // Create a GeoJSON parser
+      let drawnFeatures = parser.writeFeaturesObject([e.feature]); // Convert the drawn feature to GeoJSON
+      console.log(drawnFeatures); // Log the drawn features to the console
+    });
+  
+    */
 }
