@@ -276,11 +276,24 @@ function init() {
   }
 
   // Vector Feature Popup Information
+  const overlayContainerElement = document.querySelector('.overlay-container')
+  const overlayLayer = new ol.Overlay({
+    element:overlayContainerElement
+  })
+  map.addOverlay(overlayLayer);
+  const overlayFeatureName = document.getElementById('feature-name')
+  const overlayFeatureAdditionalinfo = document.getElementById('feature-additional-info')
+  
   // Vector Feature Popup Logic
 
   map.on('click',function(e){
     map.forEachFeatureAtPixel(e.pixel,function(feature,layer){
-      console.log(feature)
+      let clickedCoordinate = e.coordinate;
+      let clickedFeatureName = feature.get(('District'));
+      let clickedFeatureAdditionalinfo = feature.get(('additionalinfo'));
+      overlayLayer.setPosition(clickedCoordinate);
+      overlayFeatureName.innerHTML = clickedFeatureName;
+      overlayFeatureAdditionalinfo.innerHTML = clickedFeatureAdditionalinfo;
     })
   })
 
