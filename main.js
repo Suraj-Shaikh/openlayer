@@ -196,6 +196,34 @@ function init() {
     title: "openstreetmapHumanitarianStatic",
   });
   // Vector Layers
+  // Styling of vector features
+  const fillStyle = new ol.style.Fill({
+    color: [40, 119, 247, 1]
+  })
+
+  // Style for lines
+  const strokeStyle = new ol.style.Stroke({
+    color: [30, 30, 31, 1],
+    width: 1.2,
+    lineCap: 'square',
+    lineJoin: 'bevel',
+    lineDash: [3, 3]
+  }) 
+ 
+  // Central EU Countries GeoJSON VectorImage Layer
+  const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
+    source: new ol.source.Vector({
+      url: './data/Central_EU_countries_GEOJSON.geojson',
+      format: new ol.format.GeoJSON()
+    }),
+    visible: true,
+    title: 'CentralEUCountriesGeoJSON' ,
+    style: new ol.style.Style({
+      fill: fillStyle,
+      stroke: strokeStyle,
+    })
+  })
+
   //Central India State GeoJSON Vector Layer
   const IndianStateGeoJSON = new ol.layer.Vector({
     source: new ol.source.Vector({
@@ -204,6 +232,10 @@ function init() {
     }),
     visible: true,
     title: "IndianStateGeoJSON",
+    style: new ol.style.Style({
+      fill: fillStyle,
+      stroke: strokeStyle,
+    })
   });
 
   //Central India State GeoJSON VectorImage Layer
@@ -247,7 +279,8 @@ function init() {
       openstreetmapHumanitarianStatic,
       IndianStateGeoJSON,
       EUCountriesKML,
-      heatMapOnlineFBUsers
+      heatMapOnlineFBUsers,
+      EUCountriesGeoJSONVectorImage
     ],
   });
   map.addLayer(rasterTileLayerGroup);
@@ -291,54 +324,12 @@ function init() {
       let clickedCoordinate = e.coordinate;
       let clickedFeatureName = feature.get(('District'));
       let clickedFeatureAdditionalinfo = feature.get(('additionalinfo'));
-      overlayLayer.setPosition(clickedCoordinate);
-      overlayFeatureName.innerHTML = clickedFeatureName;
-      overlayFeatureAdditionalinfo.innerHTML = clickedFeatureAdditionalinfo;
+      if(clickedFeatureName && clickedFeatureAdditionalinfo != undefined){
+        overlayLayer.setPosition(clickedCoordinate);
+        overlayFeatureName.innerHTML = clickedFeatureName;
+        overlayFeatureAdditionalinfo.innerHTML = clickedFeatureAdditionalinfo;
+      }
     })
   })
 
-  /*
-    // console.log(ol.control.defaults()); // Log the default controls to the console
-  
-    // Popup for displaying coordinates
-    const popupContainerElement = document.getElementById("popup-coordinates");
-  
-    const popup = new ol.Overlay({
-      element: popupContainerElement, // HTML element for the popup
-      positioning: "center-right", // Positioning of the popup
-    });
-  
-    map.addOverlay(popup); // Add the popup overlay to the map
-  
-  
-    // Event listener for map clicks
-    map.on("click", function (e) {
-      const clickedCoordinate = e.coordinate; // Get the clicked coordinate
-      console.log(clickedCoordinate);
-      popup.setPosition(undefined); // Clear the previous popup position
-      popup.setPosition(clickedCoordinate); // Set the new popup position
-      popupContainerElement.innerHTML = clickedCoordinate; // Display the coordinates in the popup
-    });
-  
-    // DragRotate interaction
-    const DragRotateInteraction = new ol.interaction.DragRotate({
-      condition: ol.events.condition.altKeyOnly // Enable rotation when the Alt key is pressed
-    });
-    map.addInteraction(DragRotateInteraction); // Add the DragRotate interaction to the map
-  
-    // Draw interaction
-    const drawInteraction = new ol.interaction.Draw({
-      type: 'Polygon', // Type of drawing interaction (Polygon)
-      freehand: true // Enable freehand drawing
-    });
-    map.addInteraction(drawInteraction); // Add the Draw interaction to the map
-  
-    // Event listener for draw end
-    drawInteraction.on('drawend', function (e) {
-      let parser = new ol.format.GeoJSON(); // Create a GeoJSON parser
-      let drawnFeatures = parser.writeFeaturesObject([e.feature]); // Convert the drawn feature to GeoJSON
-      console.log(drawnFeatures); // Log the drawn features to the console
-    });
-  
-    */
 }
