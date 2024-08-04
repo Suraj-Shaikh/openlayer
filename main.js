@@ -195,8 +195,11 @@ function init() {
     }),
     title: "openstreetmapHumanitarianStatic",
   });
+
+
   // Vector Layers
   // Styling of vector features
+
   const fillStyle = new ol.style.Fill({
     color: [40, 119, 247, 1]
   })
@@ -229,7 +232,67 @@ function init() {
     opacity:1,
     scale:0.50
   })
+
+ // Points Style
+ const pointStyle = new ol.style.Style({
+  image: new ol.style.Circle({
+    fill: new ol.style.Fill({
+      color: [245, 10, 14, 1]
+    }),
+    radius: 7,
+    stroke: new ol.style.Stroke({
+      color: [245, 10, 14, 1],
+      width: 2
+    })
+
+  })
+})
+// Lines Style
+const lineStringStyle = new ol.style.Style({
+  stroke: new ol.style.Stroke({
+    color: [59, 59, 59, 1],
+    width: 2
+  })
+})
+
+// Polygon Style
+// Blue polygons
+const blueCountriesStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: [56, 41, 194, 1]
+  })
+})
+
+// Purple polygons
+const purpleCountriesStyle = new ol.style.Style({
+  fill: new ol.style.Fill({
+    color: [164, 63, 204, 1]
+  })
+})
  
+  const EUCountriesStyle = function(feature){
+    let geometryType = feature.getGeometry().getType();
+    let incomeProperty = feature.get('income');
+
+    if(geometryType === 'Point'){
+      feature.setStyle([pointStyle]);
+    }
+
+    if(geometryType === 'LineString'){
+      feature.setStyle([lineStringStyle])
+    }
+
+    if(geometryType === 'Polygon'){
+      if(incomeProperty === 'Blue'){
+        feature.setStyle([blueCountriesStyle])
+      };
+      if(incomeProperty === 'Purple'){
+        feature.setStyle([purpleCountriesStyle])
+      }
+    }
+  }
+ 
+
   // Central EU Countries GeoJSON VectorImage Layer
   const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
     source: new ol.source.Vector({
@@ -238,11 +301,12 @@ function init() {
     }),
     visible: true,
     title: 'CentralEUCountriesGeoJSON' ,
-    style: new ol.style.Style({
-      fill: fillStyle,
-      stroke: strokeStyle,
-      image: iconMarkerStyle,
-    })
+    style: EUCountriesStyle
+    // new ol.style.Style({
+    //   fill: fillStyle,
+    //   stroke: strokeStyle,
+    //   image: iconMarkerStyle,
+    // })
   })
 
   //Central India State GeoJSON Vector Layer
@@ -344,7 +408,7 @@ function init() {
   map.on('click',function(e){
     map.forEachFeatureAtPixel(e.pixel,function(feature,layer){
       let clickedCoordinate = e.coordinate;
-      let clickedFeatureName = feature.get(('District'));
+      let clickedFeatureName = feature.get(('name'));
       let clickedFeatureAdditionalinfo = feature.get(('additionalinfo'));
       if(clickedFeatureName && clickedFeatureAdditionalinfo != undefined){
         overlayLayer.setPosition(clickedCoordinate);
