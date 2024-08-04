@@ -206,9 +206,29 @@ function init() {
     color: [30, 30, 31, 1],
     width: 1.2,
     lineCap: 'square',
-    lineJoin: 'bevel',
-    lineDash: [3, 3]
+    // lineJoin: 'bevel',
+    // lineDash: [17, 3]
   }) 
+
+  const regularShape = new ol.style.RegularShape({
+    fill: new ol.style.Fill({
+      color:[245,49,5,1]
+    }),
+    stroke:strokeStyle,
+    points:5,
+    radius:15,
+    radius1:3,
+    radius2:5
+  })
+
+  //Icon Marker Style
+  const iconMarkerStyle = new ol.style.Icon({
+    src:'./images/icons8-map-marker-94.png',
+    size:[100,100],
+    offest:[0,0],
+    opacity:1,
+    scale:0.50
+  })
  
   // Central EU Countries GeoJSON VectorImage Layer
   const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
@@ -221,6 +241,7 @@ function init() {
     style: new ol.style.Style({
       fill: fillStyle,
       stroke: strokeStyle,
+      image: iconMarkerStyle,
     })
   })
 
@@ -235,6 +256,7 @@ function init() {
     style: new ol.style.Style({
       fill: fillStyle,
       stroke: strokeStyle,
+      image: iconMarkerStyle,
     })
   });
 
