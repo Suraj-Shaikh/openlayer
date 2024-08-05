@@ -17,13 +17,17 @@ function init() {
   // });
   // const scaleLineControl = new ol.control.ScaleLine(); // Control to display a scale line
   // const zoomSliderControl = new ol.control.ZoomSlider(); // Control to display a zoom slider
-
-  // Create the map
+  // EPSG:3416  for Austria
+  proj4.defs("EPSG:3416",
+    "+proj=lcc +lat_1=49 +lat_2=46 +lat_0=47.5 +lon_0=13.33333333333333 +x_0=400000 +y_0=400000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+  );
+  ol.proj.proj4.register(proj4);
+  // Create the map Object
   var map = new ol.Map({
     view: new ol.View({
-      // projection: "EPSG:4326",
       center: [75.10494, 19.66939], // Center the map on specified coordinates
       zoom: 3, // Initial zoom level
+      projection: "EPSG:3416",
       rotation: 0, // Initial rotation angle
       // extent: [66.97497466187184,6.259464709193743, 98.68143920633882,38.0730477254945]
     }),
@@ -196,118 +200,115 @@ function init() {
     title: "openstreetmapHumanitarianStatic",
   });
 
-
   // Vector Layers
   // Styling of vector features
 
   const fillStyle = new ol.style.Fill({
-    color: [40, 119, 247, 1]
-  })
+    color: [40, 119, 247, 1],
+  });
 
   // Style for lines
   const strokeStyle = new ol.style.Stroke({
     color: [30, 30, 31, 1],
     width: 1.2,
-    lineCap: 'square',
+    lineCap: "square",
     // lineJoin: 'bevel',
     // lineDash: [17, 3]
-  }) 
+  });
 
   const regularShape = new ol.style.RegularShape({
     fill: new ol.style.Fill({
-      color:[245,49,5,1]
+      color: [245, 49, 5, 1],
     }),
-    stroke:strokeStyle,
-    points:5,
-    radius:15,
-    radius1:3,
-    radius2:5
-  })
+    stroke: strokeStyle,
+    points: 5,
+    radius: 15,
+    radius1: 3,
+    radius2: 5,
+  });
 
   //Icon Marker Style
   const iconMarkerStyle = new ol.style.Icon({
-    src:'./images/icons8-map-marker-94.png',
-    size:[100,100],
-    offest:[0,0],
-    opacity:1,
-    scale:0.50
-  })
+    src: "./images/icons8-map-marker-94.png",
+    size: [100, 100],
+    offest: [0, 0],
+    opacity: 1,
+    scale: 0.5,
+  });
 
- // Points Style
- const pointStyle = new ol.style.Style({
-  image: new ol.style.Circle({
-    fill: new ol.style.Fill({
-      color: [245, 10, 14, 1]
+  // Points Style
+  const pointStyle = new ol.style.Style({
+    image: new ol.style.Circle({
+      fill: new ol.style.Fill({
+        color: [245, 10, 14, 1],
+      }),
+      radius: 7,
+      stroke: new ol.style.Stroke({
+        color: [245, 10, 14, 1],
+        width: 2,
+      }),
     }),
-    radius: 7,
+  });
+  // Lines Style
+  const lineStringStyle = new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: [245, 10, 14, 1],
-      width: 2
-    })
+      color: [59, 59, 59, 1],
+      width: 2,
+    }),
+  });
 
-  })
-})
-// Lines Style
-const lineStringStyle = new ol.style.Style({
-  stroke: new ol.style.Stroke({
-    color: [59, 59, 59, 1],
-    width: 2
-  })
-})
+  // Polygon Style
+  // Blue polygons
+  const blueCountriesStyle = new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: [56, 41, 194, 1],
+    }),
+  });
 
-// Polygon Style
-// Blue polygons
-const blueCountriesStyle = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: [56, 41, 194, 1]
-  })
-})
+  // Purple polygons
+  const purpleCountriesStyle = new ol.style.Style({
+    fill: new ol.style.Fill({
+      color: [164, 63, 204, 1],
+    }),
+  });
 
-// Purple polygons
-const purpleCountriesStyle = new ol.style.Style({
-  fill: new ol.style.Fill({
-    color: [164, 63, 204, 1]
-  })
-})
- 
-  const EUCountriesStyle = function(feature){
+  const EUCountriesStyle = function (feature) {
     let geometryType = feature.getGeometry().getType();
-    let incomeProperty = feature.get('income');
+    let incomeProperty = feature.get("income");
 
-    if(geometryType === 'Point'){
+    if (geometryType === "Point") {
       feature.setStyle([pointStyle]);
     }
 
-    if(geometryType === 'LineString'){
-      feature.setStyle([lineStringStyle])
+    if (geometryType === "LineString") {
+      feature.setStyle([lineStringStyle]);
     }
 
-    if(geometryType === 'Polygon'){
-      if(incomeProperty === 'Blue'){
-        feature.setStyle([blueCountriesStyle])
-      };
-      if(incomeProperty === 'Purple'){
-        feature.setStyle([purpleCountriesStyle])
+    if (geometryType === "Polygon") {
+      if (incomeProperty === "Blue") {
+        feature.setStyle([blueCountriesStyle]);
+      }
+      if (incomeProperty === "Purple") {
+        feature.setStyle([purpleCountriesStyle]);
       }
     }
-  }
- 
+  };
 
   // Central EU Countries GeoJSON VectorImage Layer
   const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
     source: new ol.source.Vector({
-      url: './data/Central_EU_countries_GEOJSON.geojson',
-      format: new ol.format.GeoJSON()
+      url: "./data/Central_EU_countries_GEOJSON.geojson",
+      format: new ol.format.GeoJSON(),
     }),
     visible: true,
-    title: 'CentralEUCountriesGeoJSON' ,
-    style: EUCountriesStyle
+    title: "CentralEUCountriesGeoJSON",
+    style: EUCountriesStyle,
     // new ol.style.Style({
     //   fill: fillStyle,
     //   stroke: strokeStyle,
     //   image: iconMarkerStyle,
     // })
-  })
+  });
 
   //Central India State GeoJSON Vector Layer
   const IndianStateGeoJSON = new ol.layer.Vector({
@@ -321,7 +322,7 @@ const purpleCountriesStyle = new ol.style.Style({
       fill: fillStyle,
       stroke: strokeStyle,
       image: iconMarkerStyle,
-    })
+    }),
   });
 
   //Central India State GeoJSON VectorImage Layer
@@ -346,15 +347,15 @@ const purpleCountriesStyle = new ol.style.Style({
   // HeatMap
   const heatMapOnlineFBUsers = new ol.layer.Heatmap({
     source: new ol.source.Vector({
-      url: './data/onlineFBUsers.geojson',
-      format: new ol.format.GeoJSON()
+      url: "./data/onlineFBUsers.geojson",
+      format: new ol.format.GeoJSON(),
     }),
     radius: 20,
     blur: 12,
-    gradient: ['#DC143C', '#DC143C', '#000000', '#000000', '#000000'],
-    title: 'OnlineFBUsers',
-    visible: false
-  })
+    gradient: ["#DC143C", "#DC143C", "#000000", "#000000", "#000000"],
+    title: "OnlineFBUsers",
+    visible: false,
+  });
 
   // Raster Tile Layer Group
   const rasterTileLayerGroup = new ol.layer.Group({
@@ -366,7 +367,7 @@ const purpleCountriesStyle = new ol.style.Style({
       IndianStateGeoJSON,
       EUCountriesKML,
       heatMapOnlineFBUsers,
-      EUCountriesGeoJSONVectorImage
+      EUCountriesGeoJSONVectorImage,
     ],
   });
   map.addLayer(rasterTileLayerGroup);
@@ -395,27 +396,28 @@ const purpleCountriesStyle = new ol.style.Style({
   }
 
   // Vector Feature Popup Information
-  const overlayContainerElement = document.querySelector('.overlay-container')
+  const overlayContainerElement = document.querySelector(".overlay-container");
   const overlayLayer = new ol.Overlay({
-    element:overlayContainerElement
-  })
+    element: overlayContainerElement,
+  });
   map.addOverlay(overlayLayer);
-  const overlayFeatureName = document.getElementById('feature-name')
-  const overlayFeatureAdditionalinfo = document.getElementById('feature-additional-info')
-  
+  const overlayFeatureName = document.getElementById("feature-name");
+  const overlayFeatureAdditionalinfo = document.getElementById(
+    "feature-additional-info"
+  );
+
   // Vector Feature Popup Logic
 
-  map.on('click',function(e){
-    map.forEachFeatureAtPixel(e.pixel,function(feature,layer){
+  map.on("click", function (e) {
+    map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
       let clickedCoordinate = e.coordinate;
-      let clickedFeatureName = feature.get(('name'));
-      let clickedFeatureAdditionalinfo = feature.get(('additionalinfo'));
-      if(clickedFeatureName && clickedFeatureAdditionalinfo != undefined){
+      let clickedFeatureName = feature.get("name");
+      let clickedFeatureAdditionalinfo = feature.get("additionalinfo");
+      if (clickedFeatureName && clickedFeatureAdditionalinfo != undefined) {
         overlayLayer.setPosition(clickedCoordinate);
         overlayFeatureName.innerHTML = clickedFeatureName;
         overlayFeatureAdditionalinfo.innerHTML = clickedFeatureAdditionalinfo;
       }
-    })
-  })
-
+    });
+  });
 }
