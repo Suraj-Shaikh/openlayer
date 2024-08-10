@@ -18,10 +18,19 @@ function init() {
   // const scaleLineControl = new ol.control.ScaleLine(); // Control to display a scale line
   // const zoomSliderControl = new ol.control.ZoomSlider(); // Control to display a zoom slider
   // EPSG:3416  for Austria
-  proj4.defs("EPSG:3416",
+  proj4.defs(
+    "EPSG:3416",
     "+proj=lcc +lat_1=49 +lat_2=46 +lat_0=47.5 +lon_0=13.33333333333333 +x_0=400000 +y_0=400000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
   );
+  //EPSG:277000 for the UK
+  proj4.defs(
+    "EPSG:27700",
+    "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +nadgrids=OSTN15_NTv2_OSGBtoETRS.gsb +units=m +no_defs +type=crs"
+  );
+
   ol.proj.proj4.register(proj4);
+  // console.log(ol.porj.fromLonLat([625422.3208012241, 484928.2125922037],'EPSG:27700'))
+
   // Create the map Object
   var map = new ol.Map({
     view: new ol.View({
@@ -294,6 +303,31 @@ function init() {
     }
   };
 
+  // Austrian Cities EPSG:27700
+  const AustrianCities = new ol.layer.Vector({
+    source: new ol.source.Vector({
+      url: "./data/austrian_cities_EPSG_27700.geojson",
+      format: new ol.format.GeoJSON({
+        dataProjection: "EPSG:27700",
+      }),
+    }),
+    visible: true,
+    title: "AustrianCities",
+    style: new ol.style.Style({
+      image: new ol.style.Circle({
+        fill: new ol.style.Fill({
+          color: [15, 15, 15, 1],
+        }),
+        radius: 10,
+        stroke: new ol.style.Stroke({
+          color: [15, , 15, 15, 1],
+          width: 2,
+        }),
+      }),
+    }),
+  });
+  map.addLayer(AustrianCities);
+
   // Central EU Countries GeoJSON VectorImage Layer
   const EUCountriesGeoJSONVectorImage = new ol.layer.VectorImage({
     source: new ol.source.Vector({
@@ -409,15 +443,44 @@ function init() {
   // Vector Feature Popup Logic
 
   map.on("click", function (e) {
-    map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
-      let clickedCoordinate = e.coordinate;
-      let clickedFeatureName = feature.get("name");
-      let clickedFeatureAdditionalinfo = feature.get("additionalinfo");
-      if (clickedFeatureName && clickedFeatureAdditionalinfo != undefined) {
-        overlayLayer.setPosition(clickedCoordinate);
-        overlayFeatureName.innerHTML = clickedFeatureName;
-        overlayFeatureAdditionalinfo.innerHTML = clickedFeatureAdditionalinfo;
-      }
-    });
-  });
+    map.forEachFeatureAtPixel(
+      e.pixel,
+      function (feature, layer) {
+        let clickedCoordinate = e.coordinate;
+        console.log(clickedCoordinate);
+        let clickedFeatureName = feature.get("name");
+        let clickedFeatureAdditionalinfo = feature.get("additionalinfo");
+        if (clickedFeatureName && clickedFeatureAdditionalinfo != undefined) {
+          overlayLayer.setPosition(clickedCoordinate);
+          overlayFeatureName.innerHTML = clickedFeatureName;
+          overlayFeatureAdditionalinfo.innerHTML = clickedFeatureAdditionalinfo;
+        }
+      },
+      {
+        layerFilter: function (layerCondidate) {
+          return layerCondidate.get("title") === "CentralEUCountriesGeoJSON";
+        },
+      })
+  })
+
+  //Select Interaction - for Styling Selected Points
+  const selectInteraction = new ol.interaction.Select({
+    condition: ol.events.condition.singleClick,
+    layers: function(layer){
+      return [layer.get('title') === 'AustrianCities', layer.get('title') === 'CentralEUCountriesGeoJSON',]
+    },
+    style: new ol.style.Style({
+      image: new ol.style.Circle({
+        fill: new ol.style.Fill({
+          color: [247, 26, 10, 1]
+        }),
+        radius: 12,
+        stroke: new ol.style.Stroke({
+          color: [247, 26, 10, 1],
+          width: 3
+        })
+      })
+    })
+  })
+  map.addInteraction(selectInteraction);
 }
