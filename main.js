@@ -34,7 +34,8 @@ function init() {
   // Create the map Object
   var map = new ol.Map({
     view: new ol.View({
-      center: [75.10494, 19.66939], // Center the map on specified coordinates
+      center: [0,0], // Center the map on specified coordinates
+      // center: ol.porj.fromLonLat([625422.3208012241, 484928.2125922037],'EPSG:27700'),
       zoom: 3, // Initial zoom level
       projection: "EPSG:3416",
       rotation: 0, // Initial rotation angle
@@ -464,7 +465,7 @@ function init() {
   })
 
   //Select Interaction - for Styling Selected Points
-  const selectInteraction = new ol.interaction.Select({
+  /*const selectInteraction = new ol.interaction.Select({
     condition: ol.events.condition.singleClick,
     layers: function(layer){
       return [layer.get('title') === 'AustrianCities', layer.get('title') === 'CentralEUCountriesGeoJSON',]
@@ -482,5 +483,10 @@ function init() {
       })
     })
   })
-  map.addInteraction(selectInteraction);
+  map.addInteraction(selectInteraction);*/
+  const selectInteraction2 = new ol.interaction.Select();
+  map.addInteraction(selectInteraction2);
+  selectInteraction2.on('select',function(e){
+    console.log(e.selected[0].getGeometry().getType())
+  })
 }
