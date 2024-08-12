@@ -8,13 +8,7 @@ function init() {
   // Initialize the map controls
   // const fullScreenControl = new ol.control.FullScreen(); // Control to enable full screen mode
   // const mousePositionControl = new ol.control.MousePosition(); // Control to display mouse coordinates
-  // const overViewMapControl = new ol.control.OverviewMap({ // Control to show an overview map
-  //   layers: [
-  //     new ol.layer.Tile({
-  //       source: new ol.source.OSM() // OpenStreetMap layer for the overview map
-  //     })
-  //   ]
-  // });
+
   // const scaleLineControl = new ol.control.ScaleLine(); // Control to display a scale line
   // const zoomSliderControl = new ol.control.ZoomSlider(); // Control to display a zoom slider
   // EPSG:3416  for Austria
@@ -36,7 +30,7 @@ function init() {
     view: new ol.View({
       center: [0, 0], // Center the map on specified coordinates
       // center: ol.porj.fromLonLat([625422.3208012241, 484928.2125922037],'EPSG:27700'),
-      zoom: 3, // Initial zoom level
+      zoom: 5, // Initial zoom level
       projection: "EPSG:3416",
       rotation: 0, // Initial rotation angle
       // extent: [66.97497466187184,6.259464709193743, 98.68143920633882,38.0730477254945]
@@ -511,4 +505,24 @@ function init() {
       );
     }
   });
+  // Map control
+  const scaleLineControl = new ol.control.ScaleLine({
+    units: "metric",
+    minWidth: 100,
+    bar: true,
+    steps: 4,
+    // text:true
+  });
+  map.addControl(scaleLineControl);
+
+  // OverView Map
+  const overViewMapControl = new ol.control.OverviewMap({
+    // Control to show an overview map
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM(), // OpenStreetMap layer for the overview map
+      }),
+    ],
+  });
+  map.addControl(overViewMapControl);
 }
