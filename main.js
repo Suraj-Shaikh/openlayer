@@ -34,7 +34,7 @@ function init() {
   // Create the map Object
   var map = new ol.Map({
     view: new ol.View({
-      center: [0,0], // Center the map on specified coordinates
+      center: [0, 0], // Center the map on specified coordinates
       // center: ol.porj.fromLonLat([625422.3208012241, 484928.2125922037],'EPSG:27700'),
       zoom: 3, // Initial zoom level
       projection: "EPSG:3416",
@@ -448,7 +448,7 @@ function init() {
       e.pixel,
       function (feature, layer) {
         let clickedCoordinate = e.coordinate;
-        console.log(clickedCoordinate);
+        // console.log(clickedCoordinate);
         let clickedFeatureName = feature.get("name");
         let clickedFeatureAdditionalinfo = feature.get("additionalinfo");
         if (clickedFeatureName && clickedFeatureAdditionalinfo != undefined) {
@@ -461,8 +461,9 @@ function init() {
         layerFilter: function (layerCondidate) {
           return layerCondidate.get("title") === "CentralEUCountriesGeoJSON";
         },
-      })
-  })
+      }
+    );
+  });
 
   //Select Interaction - for Styling Selected Points
   /*const selectInteraction = new ol.interaction.Select({
@@ -484,9 +485,30 @@ function init() {
     })
   })
   map.addInteraction(selectInteraction);*/
+
+  //Select Interaction 2
   const selectInteraction2 = new ol.interaction.Select();
   map.addInteraction(selectInteraction2);
-  selectInteraction2.on('select',function(e){
-    console.log(e.selected[0].getGeometry().getType())
-  })
+  selectInteraction2.on("select", function (e) {
+    let selectedFeature = e.selected;
+    if (
+      selectedFeature.length > 0 &&
+      selectedFeature[0].getGeometry().getType() === "Point"
+    ) {
+      selectedFeature[0].setStyle(
+        new ol.style.Style({
+          image: new ol.style.Circle({
+            fill: new ol.style.Fill({
+              color: [247, 26, 10, 1],
+            }),
+            radius: 12,
+            stroke: new ol.style.Stroke({
+              color: [247, 26, 10, 1],
+              width: 3,
+            }),
+          }),
+        })
+      );
+    }
+  });
 }
