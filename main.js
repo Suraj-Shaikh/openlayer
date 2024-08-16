@@ -1,7 +1,6 @@
 window.onload = init;
 
 function init() {
-  
   //EPSG:3416 for Austria
   proj4.defs(
     "EPSG:3416",
@@ -26,21 +25,35 @@ function init() {
     steps: 4,
     // text:true
   });
-  
-  const zoomControl = new ol.control.Zoom()
-  const mapControls = [attributionControl, scaleLineControl, zoomControl]
+
+  // OverView Map
+  const overViewMapControl = new ol.control.OverviewMap({
+    tipLabel: "Custom Overview Map",
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.OSM(),
+      }),
+    ],
+  });
+
+  const zoomControl = new ol.control.Zoom();
+  const mapControls = [
+    attributionControl,
+    scaleLineControl,
+    overViewMapControl,
+    zoomControl,
+  ];
 
   // Create the map Object
   var map = new ol.Map({
     view: new ol.View({
       center: [0, 0], // Center the map on specified coordinates
-      // center: ol.porj.fromLonLat([625422.3208012241, 484928.2125922037],'EPSG:27700'),
       zoom: 5, // Initial zoom level
       projection: "EPSG:3416",
       rotation: 0, // Initial rotation angle
-      // extent: [66.97497466187184,6.259464709193743, 98.68143920633882,38.0730477254945]
     }),
     target: "js-map", // HTML element id to render the map
+    controls: ol.control.defaults({ attribution: false }).extend(mapControls),
   });
 
   // Base Layer
@@ -499,19 +512,6 @@ function init() {
       );
     }
   });
-
-  // OverView Map
-  const overViewMapControl = new ol.control.OverviewMap({
-    tipLabel: 'Custom Overview Map',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.OSM()
-      })
-    ]
-  })
-
-  map.addControl(overViewMapControl);
-  
 
   // Switch ON/OFF Controls Logic
   const controlButtonElements = document.querySelectorAll(
