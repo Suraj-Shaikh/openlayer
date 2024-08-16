@@ -1,17 +1,8 @@
 window.onload = init;
 
-const attributionControl = new ol.control.Attribution({
-  collapsible: true,
-});
-
 function init() {
-  // Initialize the map controls
-  // const fullScreenControl = new ol.control.FullScreen(); // Control to enable full screen mode
-  // const mousePositionControl = new ol.control.MousePosition(); // Control to display mouse coordinates
-
-  // const scaleLineControl = new ol.control.ScaleLine(); // Control to display a scale line
-  // const zoomSliderControl = new ol.control.ZoomSlider(); // Control to display a zoom slider
-  // EPSG:3416  for Austria
+  
+  //EPSG:3416 for Austria
   proj4.defs(
     "EPSG:3416",
     "+proj=lcc +lat_1=49 +lat_2=46 +lat_0=47.5 +lon_0=13.33333333333333 +x_0=400000 +y_0=400000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
@@ -21,9 +12,23 @@ function init() {
     "EPSG:27700",
     "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +nadgrids=OSTN15_NTv2_OSGBtoETRS.gsb +units=m +no_defs +type=crs"
   );
-
   ol.proj.proj4.register(proj4);
-  // console.log(ol.porj.fromLonLat([625422.3208012241, 484928.2125922037],'EPSG:27700'))
+
+  // Map controls
+  const attributionControl = new ol.control.Attribution({
+    collapsible: true,
+  });
+
+  const scaleLineControl = new ol.control.ScaleLine({
+    units: "metric",
+    minWidth: 100,
+    bar: true,
+    steps: 4,
+    // text:true
+  });
+  
+  const zoomControl = new ol.control.Zoom()
+  const mapControls = [attributionControl, scaleLineControl, zoomControl]
 
   // Create the map Object
   var map = new ol.Map({
@@ -36,14 +41,6 @@ function init() {
       // extent: [66.97497466187184,6.259464709193743, 98.68143920633882,38.0730477254945]
     }),
     target: "js-map", // HTML element id to render the map
-    // keyboardEventTarget: document, // Enable keyboard events
-    // controls: ol.control.defaults().extend([ // Add default controls and extend with additional controls
-    //   fullScreenControl,
-    //   mousePositionControl,
-    //   overViewMapControl,
-    //   scaleLineControl,
-    //   zoomSliderControl
-    // ])
   });
 
   // Base Layer
@@ -73,9 +70,6 @@ function init() {
     zIndex: 0,
     visible: false,
     title: "BingMaps",
-    // extent: [
-    //   66.97497466187184, 6.259464709193743, 98.68143920633882, 38.0730477254945,
-    // ],
   });
 
   // CartoDB BaseMap Layer
@@ -505,24 +499,22 @@ function init() {
       );
     }
   });
-  // Map control
-  const scaleLineControl = new ol.control.ScaleLine({
-    units: "metric",
-    minWidth: 100,
-    bar: true,
-    steps: 4,
-    // text:true
-  });
-  map.addControl(scaleLineControl);
 
   // OverView Map
   const overViewMapControl = new ol.control.OverviewMap({
-    // Control to show an overview map
+    tipLabel: 'Custom Overview Map',
     layers: [
       new ol.layer.Tile({
-        source: new ol.source.OSM(), // OpenStreetMap layer for the overview map
-      }),
-    ],
-  });
+        source: new ol.source.OSM()
+      })
+    ]
+  })
+
   map.addControl(overViewMapControl);
+  
+
+  // Switch ON/OFF Controls Logic
+  const controlButtonElements = document.querySelectorAll(
+    ".sidebar > button[type=button]"
+  );
 }
