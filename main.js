@@ -47,10 +47,10 @@ function init() {
   // Create the map Object
   var map = new ol.Map({
     view: new ol.View({
-      center: [0, 0], // Center the map on specified coordinates
+      center: ol.proj.fromLonLat([14.62,47.89],'EPSG:3857'), // Center the map on specified coordinates
       zoom: 5, // Initial zoom level
-      projection: "EPSG:3416",
-      rotation: 0, // Initial rotation angle
+      // projection: "EPSG:3416",
+      // rotation: 0, // Initial rotation angle
     }),
     target: "js-map", // HTML element id to render the map
     controls: ol.control.defaults({ attribution: false }).extend(mapControls),
@@ -515,18 +515,31 @@ function init() {
 
   // Switch ON/OFF Controls Logic
   const controlButtonElements = document.querySelectorAll(
-    ".sidebar > button[type=button]")
-    for(let controlButton of controlButtonElements){
-      controlButton.addEventListener('click',function(e){
-        let buttonElement = e.target;
-        if(buttonElement.className === 'btn-success'){
-          map.getControls().forEach(function(controlElement){
-            if(controlElement instanceof ol.control[buttonElement.innerHTML]){
-             map.removeControl(controlElement);
-            }
-          })
-          
-        }
-      })
-    }
+    ".sidebar > button[type=button]"
+  );
+  for (let controlButton of controlButtonElements) {
+    controlButton.addEventListener("click", function (e) {
+      let buttonElement = e.target;
+      if (buttonElement.className === "btn-success") {
+        map.getControls().forEach(function (controlElement) {
+          if (controlElement instanceof ol.control[buttonElement.innerHTML]) {
+            map.removeControl(controlElement);
+          }
+        });
+        buttonElement.className = buttonElement.className.replace(
+          "btn-success",
+          "btn-default"
+        );
+      } else {
+        mapControls.forEach(function (controlElement) {
+          if (controlElement instanceof ol.control[buttonElement.innerHTML]) {
+            map.addControl(controlElement);
+          }
+        });
+        buttonElement.className = buttonElement.className.replace(
+          "btn-default","btn-success"
+        );
+      }
+    });
+  }
 }
