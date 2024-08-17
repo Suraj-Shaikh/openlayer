@@ -515,6 +515,18 @@ function init() {
 
   // Switch ON/OFF Controls Logic
   const controlButtonElements = document.querySelectorAll(
-    ".sidebar > button[type=button]"
-  );
+    ".sidebar > button[type=button]")
+    for(let controlButton of controlButtonElements){
+      controlButton.addEventListener('click',function(e){
+        let buttonElement = e.target;
+        if(buttonElement.className === 'btn-success'){
+          map.getControls().forEach(function(controlElement){
+            if(controlElement instanceof ol.control[buttonElement.innerHTML]){
+             map.removeControl(controlElement);
+            }
+          })
+          
+        }
+      })
+    }
 }

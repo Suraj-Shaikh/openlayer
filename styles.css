@@ -16,30 +16,49 @@ body {
   margin-left: 25px;
   height: 100vh;
 }
+
 .map {
   /* position: fixed; */
   width: 75vw;
   height: 100vh;
 }
 
-.ol-control button {
-  background-color: rgba(71, 182, 86, 0.6);
+/* Controls */
+
+.ol-control button{
+  background-color: rgba(30, 115, 65, 0.4)
 }
 
-
-.ol-control button:hover {
-  background-color: rgba(235, 101, 101, 0.6);
+.ol-control button:hover{
+  background-color: rgba(30, 115, 65, 1)
 }
 
-.ol-control button:focus {
-  background-color: rgba(236, 194, 77, 0.6);
+.ol-control button:focus{
+  background-color: rgba(30, 115, 65, 0.8)
 }
 
 .ol-zoom{
+  /*margin-left: 10px*/
   left: unset;
-  right: 15px;
+  right: 15px
+}
+
+.ol-zoom .ol-zoom-in{
+  border-radius: 15%
+}
+
+.ol-zoom .ol-zoom-out{
+  border-radius: 15%
 }
 
 .ol-overviewmap{
-  bottom:35px;
+  bottom: 60px
+}
+
+.btn-success{
+  background-color: rgb(4, 138, 66);
+}
+
+.btn-default{
+  background-color: rgb(255, 255, 255);
 }
