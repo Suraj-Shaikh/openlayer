@@ -47,7 +47,7 @@ function init() {
   // Create the map Object
   var map = new ol.Map({
     view: new ol.View({
-      center: ol.proj.fromLonLat([14.62,47.89],'EPSG:3857'), // Center the map on specified coordinates
+      // center: ol.proj.fromLonLat([14.62, 47.89], "EPSG:3857"), // Center the map on specified coordinates
       zoom: 5, // Initial zoom level
       // projection: "EPSG:3416",
       // rotation: 0, // Initial rotation angle
@@ -537,9 +537,28 @@ function init() {
           }
         });
         buttonElement.className = buttonElement.className.replace(
-          "btn-default","btn-success"
+          "btn-default",
+          "btn-success"
         );
       }
     });
   }
+
+  //Geolocation API
+  const viewProjection = map.getView().getProjection();
+  const geolocation = new ol.Geolocation({
+    tracking: true,
+    trackingOption: {
+      enableHighAccuracy: true,
+    },
+    projection: viewProjection
+  })
+  
+  const geolocationElement = document.getElementById('geolocation');
+  geolocation.on('change:position',function(e){
+    let geolocation = this.getPosition();
+    let LongLatGeoloctaion = ol.proj.toLonLat(geolocation,viewProjection);
+    map.getView().setCenter(geolocation);
+    geolocationElement.innerHTML = 'Longitude: ' + LongLatGeoloctaion[0].toFixed(3) + ' , ' + 'Latitude: ' + LongLatGeoloctaion[1].toFixed(3) 
+  })
 }
