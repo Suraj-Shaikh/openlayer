@@ -1,0 +1,14 @@
+* {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    overflow:auto;
+  }
+  
+  .grid-container {
+    display: grid;
+    grid-template-columns: 40vw 60vw;
+    grid-template-rows: 100vh;
+  }
