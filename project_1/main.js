@@ -107,7 +107,6 @@ function init() {
     // Re-assign active class to the clicked element
     let currentActiveStyledElement = document.querySelector('.active');
     currentActiveStyledElement.className = currentActiveStyledElement.className.replace('active', '');
-    // currentActiveStyledElement.className = currentActiveStyledElement.className.replace('active', '');
     clickedAnchorElement.className = 'active';
 
     // change the view based on the feature
@@ -125,7 +124,23 @@ function init() {
     let featureImage = feature.get('Cityimage');
     cityNameElement.innerHTML =  'Name of the City: ' + featureName;
     cityImageElement.setAttribute('src','./data/City_images/' + featureImage + '.jpg' )
+  }
 
-    
+  //Navigation Button Logic
+  const anchorNavElements = document.querySelectorAll('.column-navigation > a');
+  for(let anchorNavElement of anchorNavElements){
+    anchorNavElement.addEventListener('click',function(e){
+      let clickedAnchorElement = e.currentTarget;
+      let clickedAnchorElementID = clickedAnchorElement.id;
+      let austCitiesFeatures = austCitiesLayer.getSource().getFeatures();
+      austCitiesFeatures.forEach(function(feature){
+        let featureCityName = feature.get('Cityname')
+        if(clickedAnchorElementID === featureCityName){
+          mainLogic(feature,clickedAnchorElement);
+        }
+      })
+
+      //Home Navigation Case
+    })
   }
 }
