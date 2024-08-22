@@ -112,13 +112,19 @@ function init() {
     clickedAnchorElement.className = "active";
     // Default Style for all Features
     let austCitiesFeatures = austCitiesLayer.getSource().getFeatures();
-    austCitiesFeatures.forEach(function (feature) {feature.setStyle(austCitiesStyle)});
+    austCitiesFeatures.forEach(function (feature) {
+      feature.setStyle(austCitiesStyle);
+    });
 
     //Home Element : Change content in the feature
     if (clickedAnchorElement.id === "Home") {
       mapView.animate({ center: austrCenterCoordinate }, { zoom: 4 });
-      cityNameElement.innerHTML = "Welcome to Australian Capital Cities Tour Map";
-      cityNameElement.setAttribute("src", "./data/City_images/Australian_Flag.jpg");
+      cityNameElement.innerHTML =
+        "Welcome to Australian Capital Cities Tour Map";
+      cityNameElement.setAttribute(
+        "src",
+        "./data/City_images/Australian_Flag.jpg"
+      );
     } else {
       // change the view based on the feature
       feature.setStyle(styleForSelect);
@@ -155,4 +161,26 @@ function init() {
       }
     });
   }
+  // Feature Hover logic
+  const popoverTextElement = document.getElementById("popover-text");
+  const popoverTextLayer = new ol.Overlay({
+    element: popoverTextElement,
+    positioning: "bottom-center",
+    stopEvent: false,
+  });
+  map.addOverlay(popoverTextLayer);
+
+  map.on("pointermove", function (evt) {
+    let isFeatureAtPixel = map.hasFeatureAtPixel(evt.pixel);
+    if (isFeatureAtPixel) {
+      let featureAtPixel = map.getFeaturesAtPixel(evt.pixel);
+      let featureName = featureAtPixel[0].get("Cityname");
+      popoverTextLayer.setPosition(evt.coordinate);
+      popoverTextElement.innerHTML = featureName;
+      map.getViewport().style.cursor = 'pointer';
+    } else {
+      popoverTextLayer.setPosition(undefined)
+      map.getViewport().style.cursor = ''
+    }
+  });
 }

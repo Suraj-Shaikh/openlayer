@@ -71,3 +71,8 @@ body{
  height: 60%;
  border-radius: 10px;
 }
+
+#popover-text{
+  background-color: #dfd6d6;
+  font-size: 18px;
+}
