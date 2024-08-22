@@ -1,9 +1,10 @@
 window.onload = init;
 
 function init() {
+  const austrCenterCoordinate = [15091875.539375868, -2890099.0297847847];
   const map = new ol.Map({
     view: new ol.View({
-      center: [15091875.539375868, -2890099.0297847847],
+      center: austrCenterCoordinate,
       zoom: 1,
       extent: [
         11644482.371265175, -5927677.981920381, 17897308.66780227,
@@ -90,57 +91,68 @@ function init() {
   map.addLayer(austCitiesLayer);
 
   // Map Features Click Logic
-  const navElements = document.querySelector('.column-navigation');
-  const cityNameElement = document.getElementById('cityname');
-  const cityImageElement = document.getElementById('cityimage');
+  const navElements = document.querySelector(".column-navigation");
+  const cityNameElement = document.getElementById("cityname");
+  const cityImageElement = document.getElementById("cityimage");
   const mapView = map.getView();
 
- map.on('singleclick', function(evt){
-    map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
-      let featureName = feature.get('Cityname');
-      let navElement = navElements.children.namedItem(featureName);      
-      mainLogic(feature, navElement)
-    })
-  })
-
-  function mainLogic(feature, clickedAnchorElement){
-    // Re-assign active class to the clicked element
-    let currentActiveStyledElement = document.querySelector('.active');
-    currentActiveStyledElement.className = currentActiveStyledElement.className.replace('active', '');
-    clickedAnchorElement.className = 'active';
-
-    // change the view based on the feature
-    let featureCoordinates = feature.get("geometry").getCoordinates();
-    mapView.animate({ center: featureCoordinates }, { zoom: 5 });
-
-    let austCitiesFeatures = austCitiesLayer.getSource().getFeatures();
-    austCitiesFeatures.forEach(function (feature) {
-      feature.setStyle(austCitiesStyle);
+  map.on("singleclick", function (evt) {
+    map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+      let featureName = feature.get("Cityname");
+      let navElement = navElements.children.namedItem(featureName);
+      mainLogic(feature, navElement);
     });
-    feature.setStyle(styleForSelect);
+  });
 
-    //get image 
-    let featureName = feature.get('Cityname');
-    let featureImage = feature.get('Cityimage');
-    cityNameElement.innerHTML =  'Name of the City: ' + featureName;
-    cityImageElement.setAttribute('src','./data/City_images/' + featureImage + '.jpg' )
+  function mainLogic(feature, clickedAnchorElement) {
+    // Re-assign active class to the clicked element
+    let currentActiveStyledElement = document.querySelector(".active");
+    currentActiveStyledElement.className =
+      currentActiveStyledElement.className.replace("active", "");
+    clickedAnchorElement.className = "active";
+    // Default Style for all Features
+    let austCitiesFeatures = austCitiesLayer.getSource().getFeatures();
+    austCitiesFeatures.forEach(function (feature) {feature.setStyle(austCitiesStyle)});
+
+    //Home Element : Change content in the feature
+    if (clickedAnchorElement.id === "Home") {
+      mapView.animate({ center: austrCenterCoordinate }, { zoom: 4 });
+      cityNameElement.innerHTML = "Welcome to Australian Capital Cities Tour Map";
+      cityNameElement.setAttribute("src", "./data/City_images/Australian_Flag.jpg");
+    } else {
+      // change the view based on the feature
+      feature.setStyle(styleForSelect);
+      let featureCoordinates = feature.get("geometry").getCoordinates();
+      mapView.animate({ center: featureCoordinates }, { zoom: 5 });
+      //get image
+      let featureName = feature.get("Cityname");
+      let featureImage = feature.get("Cityimage");
+      cityNameElement.innerHTML = "Name of the City: " + featureName;
+      cityImageElement.setAttribute(
+        "src",
+        "./data/City_images/" + featureImage + ".jpg"
+      );
+    }
   }
 
   //Navigation Button Logic
-  const anchorNavElements = document.querySelectorAll('.column-navigation > a');
-  for(let anchorNavElement of anchorNavElements){
-    anchorNavElement.addEventListener('click',function(e){
+  const anchorNavElements = document.querySelectorAll(".column-navigation > a");
+  for (let anchorNavElement of anchorNavElements) {
+    anchorNavElement.addEventListener("click", function (e) {
       let clickedAnchorElement = e.currentTarget;
       let clickedAnchorElementID = clickedAnchorElement.id;
       let austCitiesFeatures = austCitiesLayer.getSource().getFeatures();
-      austCitiesFeatures.forEach(function(feature){
-        let featureCityName = feature.get('Cityname')
-        if(clickedAnchorElementID === featureCityName){
-          mainLogic(feature,clickedAnchorElement);
+      austCitiesFeatures.forEach(function (feature) {
+        let featureCityName = feature.get("Cityname");
+        if (clickedAnchorElementID === featureCityName) {
+          mainLogic(feature, clickedAnchorElement);
         }
-      })
+      });
 
-      //Home Navigation Case
-    })
+      //Home Element : Navigation Case
+      if (clickedAnchorElementID === "Home") {
+        mainLogic(undefined, clickedAnchorElement);
+      }
+    });
   }
 }
